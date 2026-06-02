@@ -1,0 +1,191 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  background: #050505;
+  color: white;
+}
+
+.ui-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.ui-panel {
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 600px;
+  pointer-events: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.ui-panel h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #00ffcc;
+}
+
+.ui-panel p {
+  line-height: 1.6;
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: white;
+  color: black;
+}
+
+ .story-cards-container {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  pointer-events: auto;
+  animation: fadeInUp 1s ease;
+}
+
+.story-card {
+  width: 260px;
+  height: 360px;
+  background: rgba(6, 15, 30, 0.85);
+  border: 1.5px solid rgba(0, 240, 255, 0.45);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.2), inset 0 0 15px rgba(0, 240, 255, 0.05);
+  backdrop-filter: blur(20px);
+  padding: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .story-cards-container, .projects-cards-container {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 20px;
+    justify-content: flex-start;
+    gap: 15vw !important; /* Large gap ensures only 1 card is visible */
+    width: 100vw;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    
+    /* Hide scrollbar for a cleaner mobile layout */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  
+  .story-cards-container::before, .projects-cards-container::before {
+    /* Perfectly center the first card (Safari fix for padding-left bug) */
+    content: '';
+    flex: 0 0 calc(50vw - min(160px, 42.5vw));
+  }
+  .story-cards-container::-webkit-scrollbar, .projects-cards-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  
+  .story-cards-container::after, .projects-cards-container::after {
+    /* Perfectly center the last card (Safari fix for margin-right bug) */
+    content: '';
+    flex: 0 0 calc(50vw - min(160px, 42.5vw));
+  }
+  
+  .story-card, .project-card {
+    box-sizing: border-box !important;
+    width: 320px !important;
+    max-width: 85vw !important;
+    min-width: auto !important;
+    scroll-snap-align: center;
+    flex-shrink: 0;
+  }
+  
+  .story-card {
+    height: 340px !important;
+    padding: 16px !important;
+  }
+  .project-card {
+    height: 360px !important;
+    padding: 20px !important;
+  }
+  
+  /* Milestone Stage (Stage 4) overrides for Mobile */
+  .milestone-content {
+    flex-direction: column !important;
+    gap: 15px !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+  .milestone-bg-year {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 0 !important;
+    font-size: 8rem !important;
+    opacity: 0.08 !important;
+  }
+  .milestone-info {
+    align-items: center !important;
+  }
+}
+
+.projects-cards-container {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  pointer-events: auto;
+  animation: fadeInUp 1s ease;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
