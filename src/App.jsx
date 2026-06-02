@@ -1162,6 +1162,8 @@ export default function App() {
   const [selectedBlogIdx, setSelectedBlogIdx] = useState(null);
   const [activeServiceIdx, setActiveServiceIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
   const targetCameraZ = useRef(10);
 
   const projectsContainerRef = useRef(null);
@@ -1170,6 +1172,17 @@ export default function App() {
 
   const currentStageRef = useRef(0);
   const isTransitioningRef = useRef(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFadeOut(true);
+      const unmountTimer = setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+      return () => clearTimeout(unmountTimer);
+    }, 2200);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -1342,6 +1355,120 @@ export default function App() {
 
   return (
     <>
+      {isLoading && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: '#020617',
+          zIndex: 99999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: "'Orbitron', sans-serif",
+          color: '#ffffff',
+          overflow: 'hidden',
+          opacity: fadeOut ? 0 : 1,
+          transition: 'opacity 0.5s ease-in-out',
+          pointerEvents: fadeOut ? 'none' : 'auto'
+        }}>
+          {/* Outer glowing frame */}
+          <div style={{
+            position: 'absolute',
+            top: '20px', left: '20px', right: '20px', bottom: '20px',
+            border: '1px solid rgba(0, 240, 255, 0.15)',
+            pointerEvents: 'none',
+            zIndex: 1
+          }} />
+
+          {/* Cyber corners */}
+          <div style={{ position: 'absolute', top: '30px', left: '30px', width: '20px', height: '20px', borderTop: '3px solid #00f0ff', borderLeft: '3px solid #00f0ff', pointerEvents: 'none', zIndex: 2 }} />
+          <div style={{ position: 'absolute', top: '30px', right: '30px', width: '20px', height: '20px', borderTop: '3px solid #00f0ff', borderRight: '3px solid #00f0ff', pointerEvents: 'none', zIndex: 2 }} />
+          <div style={{ position: 'absolute', bottom: '30px', left: '30px', width: '20px', height: '20px', borderBottom: '3px solid #00f0ff', borderLeft: '3px solid #00f0ff', pointerEvents: 'none', zIndex: 2 }} />
+          <div style={{ position: 'absolute', bottom: '30px', right: '30px', width: '20px', height: '20px', borderBottom: '3px solid #00f0ff', borderRight: '3px solid #00f0ff', pointerEvents: 'none', zIndex: 2 }} />
+
+          {/* Glowing cosmic ring spinner */}
+          <div style={{ position: 'relative', width: '130px', height: '130px', marginBottom: '35px', zIndex: 2 }}>
+            <div style={{
+              position: 'absolute',
+              top: 0, left: 0, right: 0, bottom: 0,
+              border: '2.5px solid transparent',
+              borderTopColor: '#00f0ff',
+              borderBottomColor: '#00f0ff',
+              borderRadius: '50%',
+              animation: 'spinLoader 1.8s linear infinite',
+              boxShadow: '0 0 15px rgba(0, 240, 255, 0.2)'
+            }} />
+            <div style={{
+              position: 'absolute',
+              top: '15px', left: '15px', right: '15px', bottom: '15px',
+              border: '2px solid transparent',
+              borderLeftColor: '#d946ef',
+              borderRightColor: '#d946ef',
+              borderRadius: '50%',
+              animation: 'spinLoaderReverse 1.2s linear infinite',
+              boxShadow: '0 0 15px rgba(217, 70, 239, 0.2)'
+            }} />
+            <div style={{
+              position: 'absolute',
+              top: '42px', left: '42px', right: '42px', bottom: '42px',
+              background: 'radial-gradient(circle, #00f0ff 0%, transparent 70%)',
+              borderRadius: '50%',
+              animation: 'pulseGlowLoader 2s ease-in-out infinite'
+            }} />
+          </div>
+
+          {/* Brand Text */}
+          <h1 style={{
+            fontSize: '28px',
+            fontWeight: 900,
+            letterSpacing: '10px',
+            color: '#ffffff',
+            textShadow: '0 0 25px rgba(0, 255, 255, 0.8), 0 0 50px rgba(0, 255, 255, 0.3)',
+            margin: '0 0 12px 0',
+            textTransform: 'uppercase',
+            zIndex: 2,
+            textAlign: 'center'
+          }}>
+            TRUE TWIST
+          </h1>
+          
+          {/* Subtitle / status */}
+          <div style={{
+            fontSize: '11px',
+            color: '#00f0ff',
+            letterSpacing: '4px',
+            textTransform: 'uppercase',
+            opacity: 0.8,
+            animation: 'pulseTextLoader 1.5s infinite',
+            zIndex: 2,
+            textAlign: 'center'
+          }}>
+            INITIALIZING SYSTEM PORTAL...
+          </div>
+
+          {/* Global Keyframe CSS */}
+          <style>{`
+            @keyframes spinLoader {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+            @keyframes spinLoaderReverse {
+              0% { transform: rotate(360deg); }
+              100% { transform: rotate(0deg); }
+            }
+            @keyframes pulseGlowLoader {
+              0%, 100% { transform: scale(0.9); opacity: 0.4; }
+              50% { transform: scale(1.15); opacity: 0.95; }
+            }
+            @keyframes pulseTextLoader {
+              0%, 100% { opacity: 0.45; text-shadow: 0 0 5px rgba(0,240,255,0.2); }
+              50% { opacity: 1; text-shadow: 0 0 15px rgba(0,240,255,0.7); }
+            }
+          `}</style>
+        </div>
+      )}
+
       <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
         <color attach="background" args={['#000000']} />
         <fog attach="fog" args={['#000000', 15, 60]} />
