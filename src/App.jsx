@@ -1164,6 +1164,8 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isLoading, setIsLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingStepIdx, setLoadingStepIdx] = useState(0);
   const targetCameraZ = useRef(10);
 
   const projectsContainerRef = useRef(null);
@@ -1173,16 +1175,49 @@ export default function App() {
   const currentStageRef = useRef(0);
   const isTransitioningRef = useRef(false);
 
+  const STATUS_STEPS = [
+    "CONNECTING TO TRUE TWIST NODE...",
+    "RESOLVING GLSL CUSTOM SHADERS...",
+    "INITIALIZING THREE.JS WEBGL RENDERER...",
+    "GENERATING COSMIC PARTICLE FIELD...",
+    "SYNCHRONIZING AUDIO STORY LAYERS...",
+    "SYSTEM SECURE. DEPLOYING PORTAL..."
+  ];
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setFadeOut(true);
-      const unmountTimer = setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-      return () => clearTimeout(unmountTimer);
-    }, 2200);
-    return () => clearTimeout(timer);
+    const progressInterval = setInterval(() => {
+      setLoadingProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        const diff = Math.floor(Math.random() * 15) + 5;
+        return Math.min(prev + diff, 100);
+      });
+    }, 180);
+
+    const statusInterval = setInterval(() => {
+      setLoadingStepIdx((prev) => (prev < STATUS_STEPS.length - 1 ? prev + 1 : prev));
+    }, 320);
+
+    return () => {
+      clearInterval(progressInterval);
+      clearInterval(statusInterval);
+    };
   }, []);
+
+  useEffect(() => {
+    if (loadingProgress === 100) {
+      const timer = setTimeout(() => {
+        setFadeOut(true);
+        const unmountTimer = setTimeout(() => {
+          setIsLoading(false);
+        }, 600);
+        return () => clearTimeout(unmountTimer);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [loadingProgress]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -1359,7 +1394,7 @@ export default function App() {
         <div style={{
           position: 'fixed',
           top: 0, left: 0, right: 0, bottom: 0,
-          background: '#020617',
+          background: '#040814',
           zIndex: 99999,
           display: 'flex',
           flexDirection: 'column',
@@ -1369,82 +1404,200 @@ export default function App() {
           color: '#ffffff',
           overflow: 'hidden',
           opacity: fadeOut ? 0 : 1,
-          transition: 'opacity 0.5s ease-in-out',
+          transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
           pointerEvents: fadeOut ? 'none' : 'auto'
         }}>
-          {/* Outer glowing frame */}
+          {/* Cyberpunk Scanline Effect */}
           <div style={{
             position: 'absolute',
-            top: '20px', left: '20px', right: '20px', bottom: '20px',
-            border: '1px solid rgba(0, 240, 255, 0.15)',
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.08) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03))',
+            backgroundSize: '100% 4px, 6px 100%',
+            pointerEvents: 'none',
+            zIndex: 10
+          }} />
+
+          {/* Holographic grid background */}
+          <div style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: 'linear-gradient(rgba(0, 240, 255, 0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.015) 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
             pointerEvents: 'none',
             zIndex: 1
           }} />
 
-          {/* Cyber corners */}
-          <div style={{ position: 'absolute', top: '30px', left: '30px', width: '20px', height: '20px', borderTop: '3px solid #00f0ff', borderLeft: '3px solid #00f0ff', pointerEvents: 'none', zIndex: 2 }} />
-          <div style={{ position: 'absolute', top: '30px', right: '30px', width: '20px', height: '20px', borderTop: '3px solid #00f0ff', borderRight: '3px solid #00f0ff', pointerEvents: 'none', zIndex: 2 }} />
-          <div style={{ position: 'absolute', bottom: '30px', left: '30px', width: '20px', height: '20px', borderBottom: '3px solid #00f0ff', borderLeft: '3px solid #00f0ff', pointerEvents: 'none', zIndex: 2 }} />
-          <div style={{ position: 'absolute', bottom: '30px', right: '30px', width: '20px', height: '20px', borderBottom: '3px solid #00f0ff', borderRight: '3px solid #00f0ff', pointerEvents: 'none', zIndex: 2 }} />
+          {/* Cyber Corner brackets */}
+          <div style={{ position: 'absolute', top: '40px', left: '40px', width: '30px', height: '30px', borderTop: '4px solid #00f0ff', borderLeft: '4px solid #00f0ff', filter: 'drop-shadow(0 0 8px #00f0ff)', pointerEvents: 'none', zIndex: 5 }} />
+          <div style={{ position: 'absolute', top: '40px', right: '40px', width: '30px', height: '30px', borderTop: '4px solid #00f0ff', borderRight: '4px solid #00f0ff', filter: 'drop-shadow(0 0 8px #00f0ff)', pointerEvents: 'none', zIndex: 5 }} />
+          <div style={{ position: 'absolute', bottom: '40px', left: '40px', width: '30px', height: '30px', borderBottom: '4px solid #00f0ff', borderLeft: '4px solid #00f0ff', filter: 'drop-shadow(0 0 8px #00f0ff)', pointerEvents: 'none', zIndex: 5 }} />
+          <div style={{ position: 'absolute', bottom: '40px', right: '40px', width: '30px', height: '30px', borderBottom: '4px solid #00f0ff', borderRight: '4px solid #00f0ff', filter: 'drop-shadow(0 0 8px #00f0ff)', pointerEvents: 'none', zIndex: 5 }} />
 
-          {/* Glowing cosmic ring spinner */}
-          <div style={{ position: 'relative', width: '130px', height: '130px', marginBottom: '35px', zIndex: 2 }}>
+          {/* Outer glowing frame border */}
+          <div style={{
+            position: 'absolute',
+            top: '30px', left: '30px', right: '30px', bottom: '30px',
+            border: '1px solid rgba(0, 240, 255, 0.1)',
+            pointerEvents: 'none',
+            zIndex: 2
+          }} />
+
+          {/* Glowing HUD concentric layout */}
+          <div style={{
+            position: 'relative',
+            width: '200px',
+            height: '200px',
+            marginBottom: '40px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 5
+          }}>
+            {/* Outer dash rotating circle */}
             <div style={{
               position: 'absolute',
-              top: 0, left: 0, right: 0, bottom: 0,
-              border: '2.5px solid transparent',
-              borderTopColor: '#00f0ff',
-              borderBottomColor: '#00f0ff',
+              width: '100%',
+              height: '100%',
+              border: '2px dashed rgba(0, 240, 255, 0.3)',
               borderRadius: '50%',
-              animation: 'spinLoader 1.8s linear infinite',
-              boxShadow: '0 0 15px rgba(0, 240, 255, 0.2)'
+              animation: 'spinLoader 20s linear infinite'
             }} />
+
+            {/* Middle solid double accent rings */}
             <div style={{
               position: 'absolute',
-              top: '15px', left: '15px', right: '15px', bottom: '15px',
-              border: '2px solid transparent',
-              borderLeftColor: '#d946ef',
-              borderRightColor: '#d946ef',
+              width: '80%',
+              height: '80%',
+              border: '2.5px double transparent',
+              borderTopColor: '#d946ef',
+              borderBottomColor: '#d946ef',
               borderRadius: '50%',
-              animation: 'spinLoaderReverse 1.2s linear infinite',
-              boxShadow: '0 0 15px rgba(217, 70, 239, 0.2)'
+              animation: 'spinLoaderReverse 4s linear infinite',
+              filter: 'drop-shadow(0 0 10px rgba(217, 70, 239, 0.4))'
             }} />
+
+            {/* Inner neon cyan split ring */}
             <div style={{
               position: 'absolute',
-              top: '42px', left: '42px', right: '42px', bottom: '42px',
-              background: 'radial-gradient(circle, #00f0ff 0%, transparent 70%)',
+              width: '60%',
+              height: '60%',
+              border: '3px solid transparent',
+              borderLeftColor: '#00f0ff',
+              borderRightColor: '#00f0ff',
               borderRadius: '50%',
-              animation: 'pulseGlowLoader 2s ease-in-out infinite'
+              animation: 'spinLoader 2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+              filter: 'drop-shadow(0 0 15px rgba(0, 240, 255, 0.6))'
+            }} />
+
+            {/* Center core pulse node */}
+            <div style={{
+              position: 'absolute',
+              width: '25%',
+              height: '25%',
+              background: 'radial-gradient(circle, #ffffff 0%, #00f0ff 60%, transparent 100%)',
+              borderRadius: '50%',
+              boxShadow: '0 0 30px #00f0ff, 0 0 60px rgba(0, 240, 255, 0.4)',
+              animation: 'pulseGlowLoader 1.5s ease-in-out infinite'
+            }} />
+
+            {/* Floating details readout */}
+            <span style={{
+              position: 'absolute',
+              bottom: '-25px',
+              fontFamily: "'Courier New', Courier, monospace",
+              fontSize: '11px',
+              color: '#00f0ff',
+              letterSpacing: '1px'
+            }}>
+              VAL_X: {Math.sin(loadingProgress) * 1000 >= 0 ? "+" : ""}{(Math.sin(loadingProgress) * 1000).toFixed(2)}
+            </span>
+          </div>
+
+          {/* Brand header */}
+          <div style={{ zIndex: 5, textAlign: 'center', marginBottom: '20px' }}>
+            <h1 style={{
+              fontSize: 'clamp(2rem, 5vw, 3.2rem)',
+              fontWeight: 900,
+              letterSpacing: '12px',
+              color: '#ffffff',
+              textShadow: '0 0 20px rgba(0,255,255,0.8), 0 0 40px rgba(217,70,239,0.3)',
+              margin: '0 0 10px 0',
+              textTransform: 'uppercase',
+              position: 'relative'
+            }}>
+              TRUE TWIST
+            </h1>
+            
+            {/* Loading numeric progress */}
+            <div style={{
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: '16px',
+              color: '#00f0ff',
+              letterSpacing: '4px',
+              fontWeight: 'bold',
+              textShadow: '0 0 8px rgba(0,240,255,0.4)',
+              marginBottom: '15px'
+            }}>
+              SYSTEM BOOT: {loadingProgress}%
+            </div>
+          </div>
+
+          {/* Premium holographic progress bar */}
+          <div style={{
+            width: '80%',
+            maxWidth: '360px',
+            height: '6px',
+            background: 'rgba(0, 240, 255, 0.1)',
+            border: '1px solid rgba(0, 240, 255, 0.25)',
+            borderRadius: '4px',
+            padding: '2px',
+            boxSizing: 'content-box',
+            marginBottom: '25px',
+            zIndex: 5,
+            position: 'relative',
+            boxShadow: '0 0 10px rgba(0, 240, 255, 0.05)'
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${loadingProgress}%`,
+              background: 'linear-gradient(90deg, #d946ef, #00f0ff)',
+              borderRadius: '2px',
+              boxShadow: '0 0 12px #00f0ff, 0 0 25px rgba(0,240,255,0.6)',
+              transition: 'width 0.2s cubic-bezier(0.1, 0.8, 0.25, 1)'
             }} />
           </div>
 
-          {/* Brand Text */}
-          <h1 style={{
-            fontSize: '28px',
-            fontWeight: 900,
-            letterSpacing: '10px',
-            color: '#ffffff',
-            textShadow: '0 0 25px rgba(0, 255, 255, 0.8), 0 0 50px rgba(0, 255, 255, 0.3)',
-            margin: '0 0 12px 0',
-            textTransform: 'uppercase',
-            zIndex: 2,
-            textAlign: 'center'
-          }}>
-            TRUE TWIST
-          </h1>
-          
-          {/* Subtitle / status */}
+          {/* Dynamic real-time loading logs */}
           <div style={{
+            width: '85%',
+            maxWidth: '480px',
+            height: '50px',
+            background: 'rgba(2, 6, 23, 0.8)',
+            border: '1.5px solid rgba(0, 240, 255, 0.2)',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            fontFamily: "'Courier New', Courier, monospace",
             fontSize: '11px',
-            color: '#00f0ff',
-            letterSpacing: '4px',
-            textTransform: 'uppercase',
-            opacity: 0.8,
-            animation: 'pulseTextLoader 1.5s infinite',
-            zIndex: 2,
-            textAlign: 'center'
+            color: '#39ff14',
+            textAlign: 'left',
+            boxSizing: 'border-box',
+            zIndex: 5,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: 'inset 0 0 15px rgba(0, 240, 255, 0.05), 0 10px 30px rgba(0,0,0,0.5)'
           }}>
-            INITIALIZING SYSTEM PORTAL...
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: '#39ff14',
+              animation: 'pulseGlowLoader 1s infinite',
+              boxShadow: '0 0 8px #39ff14'
+            }} />
+            <span style={{ textShadow: '0 0 5px rgba(57, 255, 20, 0.5)', opacity: 0.9 }}>
+              {STATUS_STEPS[loadingStepIdx]}
+            </span>
           </div>
 
           {/* Global Keyframe CSS */}
@@ -1458,12 +1611,8 @@ export default function App() {
               100% { transform: rotate(0deg); }
             }
             @keyframes pulseGlowLoader {
-              0%, 100% { transform: scale(0.9); opacity: 0.4; }
+              0%, 100% { transform: scale(0.9); opacity: 0.5; }
               50% { transform: scale(1.15); opacity: 0.95; }
-            }
-            @keyframes pulseTextLoader {
-              0%, 100% { opacity: 0.45; text-shadow: 0 0 5px rgba(0,240,255,0.2); }
-              50% { opacity: 1; text-shadow: 0 0 15px rgba(0,240,255,0.7); }
             }
           `}</style>
         </div>
